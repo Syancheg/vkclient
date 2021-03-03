@@ -48,7 +48,7 @@ class NewsPostCell: UITableViewCell, NewsConfigurable {
     
     //MARK: - Setup
 
-    func configure(item: News){
+    func configure(item: NewsViewModel){
         postLabel.text = item.text
         textHeight = postLabel.getHeight()
         if  baseHeigth > textHeight {

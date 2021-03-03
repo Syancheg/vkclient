@@ -20,7 +20,7 @@ class AvatarView: UIView {
     }
     
     @IBInspectable
-    var shadowColor: UIColor = .black {
+    var shadowColor: UIColor = .vkGoodNight {
         didSet{
             apdateShadow()
         }

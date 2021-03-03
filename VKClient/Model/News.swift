@@ -16,7 +16,6 @@ enum NewsType {
 class News {
     var name: String = ""
     var avatar: String = ""
-    var date: String = ""
     var unixDate: Double = 0
     var text: String?
     var image: NewsfeedPhoto?
@@ -33,10 +32,6 @@ class News {
         avatar = item["photo_50"] ?? ""
         
         unixDate = json["date"].doubleValue
-        let dateTime = NSDate(timeIntervalSince1970: TimeInterval(unixDate))
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MM YYYY"
-        date = dateFormatter.string(from: dateTime as Date)
         let postType = json["type"].stringValue
         switch postType {
         case "post":

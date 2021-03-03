@@ -15,7 +15,7 @@ class NewsView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewD
     
     //MARK: - Properties
 
-    var news: [News] = []
+    var news: [NewsViewModel] = []
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var indicator: UIActivityIndicatorView!
@@ -45,12 +45,10 @@ class NewsView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewD
         guard
             let cellType = CellType(rawValue: indexPath.row),
             cellType == .content,
-            item.type == .image,
-            let photo = item.image
+            item.type == .image
         else { return UITableView.automaticDimension}
-        
         let tableWidth = tableView.bounds.width
-        let cellHeight = tableWidth * photo.aspectRatio
+        let cellHeight = tableWidth * item.aspectRatio
     
         return cellHeight
     }
@@ -91,7 +89,7 @@ class NewsView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewD
         
     }
     
-    private func contetnCellIdentifire(_ item: News) -> String {
+    private func contetnCellIdentifire(_ item: NewsViewModel) -> String {
         switch item.type {
         case .post:
             return "NewsPostCell"

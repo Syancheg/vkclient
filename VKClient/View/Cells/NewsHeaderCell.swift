@@ -13,8 +13,8 @@ class NewsHeaderCell: UITableViewCell, NewsConfigurable {
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     
-    func configure(item: News){
-        avatarView.downloadImage(urlPath: item.avatar)
+    func configure(item: NewsViewModel){
+        avatarView.image = item.avatar
         avatarView.layer.cornerRadius = avatarView.frame.width / 2
         dateLabel.text = item.date
         nameLabel.text = item.name

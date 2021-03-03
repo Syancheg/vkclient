@@ -8,7 +8,7 @@
 import UIKit
 
 protocol FriendsViewDelegate: class {
-    func seque(user: User)
+    func seque(user: UserViewModel)
 }
 
 class FriendsView: UIView, UITableViewDataSource, UITableViewDelegate, LetterPickerDelegate, UISearchBarDelegate {
@@ -17,7 +17,7 @@ class FriendsView: UIView, UITableViewDataSource, UITableViewDelegate, LetterPic
     
     weak var delegate: FriendsViewDelegate?
     
-    var users: [User] = []{
+    var users: [UserViewModel] = []{
         didSet{
             buildingRelationships()
             tableView.reloadData()
@@ -26,7 +26,7 @@ class FriendsView: UIView, UITableViewDataSource, UITableViewDelegate, LetterPic
     var sections: [String] = []
     var userOfSection: [Int: [Int]] = [:]
     var searchActive : Bool = false
-    var filterUsers: [User] = []
+    var filterUsers: [UserViewModel] = []
     lazy var operationService = VkApiOperationService()
     lazy var photoService = PhotoService(container: tableView)
     
@@ -60,10 +60,11 @@ class FriendsView: UIView, UITableViewDataSource, UITableViewDelegate, LetterPic
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FriendsCell", for: indexPath) as! FriendsCell
         let index = userOfSection[indexPath.section]![indexPath.row]
-        let data: [User] = searchActive ? filterUsers : users
+        let data: [UserViewModel] = searchActive ? filterUsers : users
         let friend = data[index]
-        cell.friendsNameLabel.text = "\(friend.lastName) \(friend.firstName)"
-        cell.avatarView.imageView.image = photoService.photo(atIndexpath: indexPath, byUrl: friend.avatarUrl)
+        cell.configure(with: friend)
+//        cell.friendsNameLabel.text = "\(friend.name) \(friend.firstName)"
+//        cell.avatarView.imageView.image = photoService.photo(atIndexpath: indexPath, byUrl: friend.avatarUrl)
         cell.selectionStyle = .none
         startAnimation(cell)
         return cell
@@ -93,7 +94,7 @@ class FriendsView: UIView, UITableViewDataSource, UITableViewDelegate, LetterPic
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         filterUsers = []
         for i in 0..<users.count{
-            let name = "\(users[i].lastName.lowercased()) \(users[i].firstName.lowercased())"
+            let name = "\(users[i].name.lowercased())"
             if name.contains(searchText.lowercased()){
                 filterUsers.append(users[i])
             }
@@ -110,9 +111,9 @@ class FriendsView: UIView, UITableViewDataSource, UITableViewDelegate, LetterPic
     //MARK: - Functions
     
     func letterPicked(_ letter: String){
-        let data: [User] = searchActive ? filterUsers : users
+        let data: [UserViewModel] = searchActive ? filterUsers : users
         if
-            let index = data.firstIndex(where: { $0.lastName.lowercased().prefix(1) == letter.lowercased() }),
+            let index = data.firstIndex(where: { $0.name.lowercased().prefix(1) == letter.lowercased() }),
             let section = sections.firstIndex(where: {$0 == letter}),
             let row = userOfSection[section]?.firstIndex(where: {$0 == index})
         {
@@ -127,17 +128,17 @@ class FriendsView: UIView, UITableViewDataSource, UITableViewDelegate, LetterPic
 //        print(#function)
         if let indexPath = tableView.indexPathForSelectedRow {
             let index = userOfSection[indexPath.section]![indexPath.row]
-            let data: [User] = searchActive ? filterUsers : users
+            let data: [UserViewModel] = searchActive ? filterUsers : users
             let friend = data[index]
-            delegate?.seque(user: friend)       
+            delegate?.seque(user: friend)
         }
     }
     
     // MARK: - Relationships
     
     func buildingRelationships() {
-        let data: [User] = searchActive ? filterUsers : users
-        let allLetters = data.map { String($0.lastName.uppercased().prefix(1)) }
+        let data: [UserViewModel] = searchActive ? filterUsers : users
+        let allLetters = data.map { String($0.name.uppercased().prefix(1)) }
         let sortLetters = Array(Set(allLetters)).sorted()
         letterPicker.letters = sortLetters
         sections = sortLetters
