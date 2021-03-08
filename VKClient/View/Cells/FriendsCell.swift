@@ -12,7 +12,8 @@ class FriendsCell: UITableViewCell {
     @IBOutlet weak var friendsNameLabel: UILabel!
     @IBOutlet weak var avatarView: AvatarView!
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-     }
+    func configure(with viewModel: UserViewModel){
+        friendsNameLabel.text = viewModel.name
+        avatarView.image = viewModel.avatar
+    }
 }

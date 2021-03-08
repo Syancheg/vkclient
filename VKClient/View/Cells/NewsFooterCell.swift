@@ -14,7 +14,7 @@ class NewsFooterCell: UITableViewCell, NewsConfigurable {
     @IBOutlet weak var commentButton: UIButton!
     @IBOutlet weak var repostButton: UIButton!
     
-    func configure(item: News){
+    func configure(item: NewsViewModel){
         viewsButton.setTitle("\(item.views)", for: .normal)
         likesButton.setTitle("\(item.likes)", for: .normal)
         commentButton.setTitle("\(item.comments)", for: .normal)

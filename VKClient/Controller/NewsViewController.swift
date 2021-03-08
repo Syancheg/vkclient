@@ -13,6 +13,7 @@ class NewsViewController: UIViewController, NewsViewDelegate, UITableViewDelegat
     // MARK: - Properies
     
     lazy var contentView = self.view as! NewsView
+    private let viewModelFactory = NewsViewModelFactory()
     lazy var service = VkApiServices()
     var pullToRefresh:UIRefreshControl!
     
@@ -42,12 +43,13 @@ class NewsViewController: UIViewController, NewsViewDelegate, UITableViewDelegat
     
     func loadNews(){
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            self?.service.getNews(completion: { (newsFeed, nextFrom) in
+            guard let strongSelf = self else { return }
+            strongSelf.service.getNews(completion: { (newsFeed, nextFrom) in
                 DispatchQueue.main.async {
-                    self?.contentView.nextFrom = nextFrom
-                    self?.contentView.news = newsFeed
-                    self?.contentView.tableView.reloadData()
-                    self?.contentView.indicator.stopAnimating()
+                    strongSelf.contentView.nextFrom = nextFrom
+                    strongSelf.contentView.news = strongSelf.viewModelFactory.constructViewModels(from: newsFeed)
+                    strongSelf.contentView.tableView.reloadData()
+                    strongSelf.contentView.indicator.stopAnimating()
                 }
             })
         }
@@ -61,7 +63,7 @@ class NewsViewController: UIViewController, NewsViewDelegate, UITableViewDelegat
                     let oldNewsCont = strongSelf.contentView.news.count
                     let newSections = (oldNewsCont..<(oldNewsCont + newsFeed.count)).map{$0}
                     strongSelf.contentView.nextFrom = nextFrom
-                    strongSelf.contentView.news.append(contentsOf: newsFeed)
+                    strongSelf.contentView.news.append(contentsOf: strongSelf.viewModelFactory.constructViewModels(from: newsFeed))
                     strongSelf.contentView.tableView.insertSections(IndexSet(newSections), with: .automatic)
                     strongSelf.contentView.isLoading = false
                 }
@@ -77,7 +79,8 @@ class NewsViewController: UIViewController, NewsViewDelegate, UITableViewDelegat
         service.getNews(from: mostFreshDate) { [weak self] (news, nextFrom) in
             guard let strongSelf = self else { return }
             strongSelf.contentView.nextFrom = nextFrom
-            strongSelf.contentView.news = news + strongSelf.contentView.news
+            let newsModel = strongSelf.viewModelFactory.constructViewModels(from: news)
+            strongSelf.contentView.news = newsModel + strongSelf.contentView.news
             strongSelf.contentView.tableView.reloadData()
             strongSelf.pullToRefresh.endRefreshing()
         }

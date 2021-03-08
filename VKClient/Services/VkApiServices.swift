@@ -192,7 +192,7 @@ class VkApiServices{
     }
     // MARK: - Parse News
     
-    func parseNews(news: [String: JSON], completion: @escaping ([News], String?) -> Void ){
+    private func parseNews(news: [String: JSON], completion: @escaping ([News], String?) -> Void ){
         let nextFrom = news["next_from"]?.stringValue
         let profiles = news["profiles"]?.arrayValue.compactMap {
             User(json: $0)

@@ -11,8 +11,7 @@ class NewsImageCell: UITableViewCell, NewsConfigurable {
 
     @IBOutlet weak var postImage: UIImageView!
 
-    func configure(item: News){
-        guard let image = item.image?.imageUrl else {return}
-        postImage.downloadImage(urlPath: image)
+    func configure(item: NewsViewModel){
+        postImage.image = item.image
     }
 }

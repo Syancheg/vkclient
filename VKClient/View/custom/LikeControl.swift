@@ -88,8 +88,8 @@ class LikeControl: UIControl {
     
     private func updateLikeStatus(){
         if isLiked {
-            likeButton.tintColor = .red
-            likeLabel.textColor = .red
+            likeButton.tintColor = .vkRedOrange
+            likeLabel.textColor = .vkRedOrange
             likesCount += 1
         } else {
             likeButton.tintColor = .white

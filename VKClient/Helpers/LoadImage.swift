@@ -10,6 +10,7 @@ import UIKit
 extension UIImage {
 
     static func getImageForUrl(urlPath: String) -> UIImage? {
+        
         if let url = URL(string: urlPath),
            let data = try? Data(contentsOf: url){
             return UIImage(data: data)!

@@ -14,43 +14,17 @@ class GroupsTableViewController: UIViewController {
     
     lazy var promiseService = VkPromiseService()
     lazy var contentView = self.view as! GroupsView
-    let realm = try! Realm()
-    var notificationToken: NotificationToken?
-    var groupsData: Results<Group>!
+    private let vkServiceAdaptor = VkApiAdaptor()
     
     // MARK: - Life Circle
 
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Мои группы"
-        loadFromApi()
-        loadFromRealm()
-        subscribeToRealmNotification()
-    }
-    
-    // MARK: - Data Source
-    
-    func loadFromRealm(){
-        groupsData = realm.objects(Group.self)
-        contentView.groups = Array(groupsData)
-        contentView.groups.count > 0 ? contentView.indicator.stopAnimating() : contentView.indicator.startAnimating()
-    }
-    func loadFromApi(){
-        promiseService.getGroups()
-    }
-    
-    // MARK: - Realm
-    
-    private func subscribeToRealmNotification(){
-        notificationToken = groupsData.observe{ (change) in
-            switch change {
-            case .initial:
-                break
-            case .update:
-                self.loadFromRealm()
-            case .error(let error):
-                print(error)
-            }
+        vkServiceAdaptor.getGroups { [weak self] (groups) in
+            guard let strongSelf = self else { return }
+            strongSelf.contentView.groups = groups
+            strongSelf.contentView.groups.count > 0 ? strongSelf.contentView.indicator.stopAnimating() : strongSelf.contentView.indicator.startAnimating()
         }
     }
     

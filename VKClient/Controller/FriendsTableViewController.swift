@@ -12,11 +12,11 @@ class FriendsTableViewController: UIViewController, FriendsViewDelegate {
     
     //MARK: - Propertires
     
-    let realm = try! Realm()
-    var notificationToken: NotificationToken?
-    var usersData: Results<User>!
     lazy var contentView = self.view as! FriendsView
     lazy var operationService = VkApiOperationService()
+    private let vkServiceAdaptor = VkApiAdaptor()
+    private let viewModelFactory = UserViewModelFactory()
+
 
     // MARK: - Life Circle
 
@@ -27,56 +27,18 @@ class FriendsTableViewController: UIViewController, FriendsViewDelegate {
         contentView.searchBar.delegate = contentView
         title = "Друзья"
         contentView.delegate = self
-        operationService.getRequest()
-        loadFromRealm()
-        subscribeToRealmNotification()
+        vkServiceAdaptor.getFirends { [weak self] (users) in
+            guard let strongSelf = self else { return }
+            strongSelf.contentView.users = strongSelf.viewModelFactory.constructViewModels(from: users)
+            strongSelf.contentView.users.count > 0 ? strongSelf.contentView.indicator.stopAnimating() : strongSelf.contentView.indicator.startAnimating()
+        }
         
     }
-    
-    // MARK: - Data Source
-    
-    func loadFromRealm(){
-        usersData = realm.objects(User.self)
-        self.contentView.users = Array(usersData)
-        contentView.users.count > 0 ? self.contentView.indicator.stopAnimating() : self.contentView.indicator.startAnimating()
-    }
-
-    
-    func seque(user: User){
+        
+    func seque(user: UserViewModel){
         let controller = AsyncAlbumController()
-        controller.friend = "\(user.lastName) \(user.firstName)"
+        controller.friend = "\(user.name)"
         controller.userId = user.id
         self.navigationController?.pushViewController(controller, animated: true)
-    }
-    
-    // MARK: - Prepare for segue
-    
-    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//
-//        if
-//            let controller = segue.destination as? FriendsPhotoCollectionViewController,
-//            let indexPath = contentView.tableView.indexPathForSelectedRow
-//        {
-//            let index = contentView.userOfSection[indexPath.section]![indexPath.row]
-//            let data: [User] = contentView.searchActive ? contentView.filterUsers : contentView.users
-//            let friend = data[index]
-//            controller.friend = "\(friend.lastName) \(friend.firstName)"
-//            controller.userId = friend.id
-//        }
-//    }
-    // MARK: - Realm
-    
-    private func subscribeToRealmNotification(){
-        notificationToken = usersData.observe{ (change) in
-            switch change {
-            case .initial:
-                break
-            case .update:
-                self.loadFromRealm()
-            case .error(let error):
-                print(error)
-            }
-        }
     }
 }

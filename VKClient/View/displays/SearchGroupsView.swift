@@ -11,8 +11,8 @@ class SearchGroupsView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     //MARK: - Properties
     
-    var groups: [Group] = []
-    var filterGroups: [Group] = []
+    var groups: [NewGroup] = []
+    var filterGroups: [NewGroup] = []
     var searchActive : Bool = false
     lazy var photoService = PhotoService(container: tableView)
     
@@ -27,7 +27,7 @@ class SearchGroupsView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let data: [Group] = searchActive ? filterGroups : groups
+        let data: [NewGroup] = searchActive ? filterGroups : groups
         return data.count
     }
     
@@ -37,7 +37,7 @@ class SearchGroupsView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GroupsCell", for: indexPath) as! GroupsCell
-        let data: [Group] = searchActive ? filterGroups : groups
+        let data: [NewGroup] = searchActive ? filterGroups : groups
         let group = data[indexPath.row]
         cell.groupsNameLabel.text = group.name
         cell.avatarGroup.imageView.image = photoService.photo(atIndexpath: indexPath, byUrl: group.avatarUrl)

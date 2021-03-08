@@ -58,7 +58,7 @@ class LettterPicker: UIView {
         ])
         layer.cornerRadius = 5
         layer.borderWidth = 1
-        layer.borderColor = UIColor.gray.cgColor
+        layer.borderColor = UIColor.vkGoodNight.cgColor
         let pan = UIPanGestureRecognizer(target: self, action: #selector(panAction))
         addGestureRecognizer(pan)
     }
@@ -67,7 +67,7 @@ class LettterPicker: UIView {
         for letter in letters {
             let button = UIButton(type: .system)
             button.setTitle(letter.uppercased(), for: .normal)
-            button.setTitleColor(.black, for: .normal)
+            button.setTitleColor(.vkGoodNight, for: .normal)
             button.addTarget(self, action: #selector(buttonTapped), for: .touchDown)
             stackView.addArrangedSubview(button)
             button.heightAnchor.constraint(equalToConstant: 20).isActive = true

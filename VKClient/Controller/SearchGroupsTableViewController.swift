@@ -10,7 +10,8 @@ import UIKit
 class SearchGroupsTableViewController: UIViewController, UISearchBarDelegate {
     
     // MARK: - Properties
-    lazy var service = VkApiServices()
+
+    private let vkServiceAdaptor = VkApiAdaptor()
     lazy var contentView = self.view as! SearchGroupsView
     
     @IBOutlet weak var searchBar: UISearchBar!
@@ -46,7 +47,8 @@ class SearchGroupsTableViewController: UIViewController, UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchText != "" {
-            service.searhGroups(query: searchText) { [weak self] (groups) in
+            
+            vkServiceAdaptor.searchGroups(q: searchText) { [weak self] (groups) in
                 self?.contentView.groups = groups
             }
         } else {

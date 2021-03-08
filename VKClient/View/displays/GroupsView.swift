@@ -11,7 +11,7 @@ class GroupsView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     //MARK: - Properties
 
-    var groups: [Group] = [] {
+    var groups: [NewGroup] = [] {
         didSet{
             tableView.reloadData()
         }
