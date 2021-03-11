@@ -15,6 +15,7 @@ class NewsViewController: UIViewController, NewsViewDelegate, UITableViewDelegat
     lazy var contentView = self.view as! NewsView
     private let viewModelFactory = NewsViewModelFactory()
     lazy var service = VkApiServices()
+    lazy var serviceProxy = VkApiServicesProxy(vkService: service)
     var pullToRefresh:UIRefreshControl!
     
     
@@ -44,20 +45,20 @@ class NewsViewController: UIViewController, NewsViewDelegate, UITableViewDelegat
     func loadNews(){
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             guard let strongSelf = self else { return }
-            strongSelf.service.getNews(completion: { (newsFeed, nextFrom) in
+            strongSelf.serviceProxy.getNews(from: nil, startFrom: nil) { (newsFeed, nextFrom) in
                 DispatchQueue.main.async {
                     strongSelf.contentView.nextFrom = nextFrom
                     strongSelf.contentView.news = strongSelf.viewModelFactory.constructViewModels(from: newsFeed)
                     strongSelf.contentView.tableView.reloadData()
                     strongSelf.contentView.indicator.stopAnimating()
                 }
-            })
+            }
         }
     }
     
     func appendNews(startFrom: String, indexPaths: [IndexPath]){
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            self?.service.getNews(startFrom: startFrom, completion: { (newsFeed, nextFrom) in
+            self?.serviceProxy.getNews(from: nil, startFrom: startFrom, completion: { (newsFeed, nextFrom) in
                 DispatchQueue.main.async {
                     guard let strongSelf = self else { return }
                     let oldNewsCont = strongSelf.contentView.news.count
@@ -76,7 +77,7 @@ class NewsViewController: UIViewController, NewsViewDelegate, UITableViewDelegat
         if let firstItem = contentView.news.first {
             mostFreshDate = firstItem.unixDate + 1
         }
-        service.getNews(from: mostFreshDate) { [weak self] (news, nextFrom) in
+        serviceProxy.getNews(from: mostFreshDate, startFrom: nil) { [weak self] (news, nextFrom) in
             guard let strongSelf = self else { return }
             strongSelf.contentView.nextFrom = nextFrom
             let newsModel = strongSelf.viewModelFactory.constructViewModels(from: news)

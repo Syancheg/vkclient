@@ -16,6 +16,7 @@ class AsyncPhotoCollectionController: ASDKViewController<ASDisplayNode>, ASColle
     var photos: [Photo] = []
     
     lazy var service = VkApiServices()
+    lazy var serviceProxy = VkApiServicesProxy(vkService: service)
     
     var collectionNode: ASCollectionNode {
         return node as! ASCollectionNode
@@ -80,7 +81,7 @@ class AsyncPhotoCollectionController: ASDKViewController<ASDisplayNode>, ASColle
     }
     
     private func loadData(){
-        service.getPhoto(ownerId: "\(ownerId)", albumId: "\(albumId)") { [weak self] (photos) in
+        serviceProxy.getPhoto(ownerId: "\(ownerId)", albumId: "\(albumId)") { [weak self] (photos) in
             guard let strongSelf = self else { return }
             strongSelf.photos = photos
             strongSelf.collectionNode.reloadData()

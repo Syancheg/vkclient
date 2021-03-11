@@ -16,6 +16,7 @@ final class VkApiAdaptor {
     }
     
     private let vkApiService = VkApiServices()
+    private lazy var vkApiServiceProxy = VkApiServicesProxy(vkService: vkApiService)
     private var realmNotificationToken: NotificationToken?
     
     private func getRequest<T:Object>(object: T.Type, method: apiMethod, completion: @escaping ([T]) -> Void){
@@ -38,9 +39,9 @@ final class VkApiAdaptor {
         self.realmNotificationToken = token
         switch method {
         case .friends:
-            vkApiService.getFriends()
+            vkApiServiceProxy.getFriends()
         case .groups:
-            vkApiService.getGroups()
+            vkApiServiceProxy.getGroups()
         }
 
 
@@ -69,7 +70,7 @@ final class VkApiAdaptor {
     }
     
     func searchGroups(q: String, completion: @escaping ([NewGroup]) -> Void){
-        vkApiService.searhGroups(query: q) { [weak self] (groups) in
+        vkApiServiceProxy.searhGroups(query: q) { [weak self] (groups) in
             guard let strongSelf = self else { return }
             var newGroups: [NewGroup] = []
             for group in groups {
