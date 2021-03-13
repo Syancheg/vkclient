@@ -19,6 +19,7 @@ class AsyncAlbumController: ASDKViewController<ASDisplayNode>, ASCollectionDataS
     }
     var albums: [Album] = []
     lazy var service = VkApiServices()
+    lazy var serviceProxy = VkApiServicesProxy(vkService: service)
     
     var collectionNode: ASCollectionNode {
         return node as! ASCollectionNode
@@ -83,7 +84,7 @@ class AsyncAlbumController: ASDKViewController<ASDisplayNode>, ASCollectionDataS
     }
     
     private func loadData(){
-        service.getAlbum(ownerId: userId, completion: { [weak self] (loadAlbums) in
+        serviceProxy.getAlbum(ownerId: userId, completion: { [weak self] (loadAlbums) in
             guard let strongSelf = self else { return }
             strongSelf.albums = loadAlbums
             strongSelf.collectionNode.reloadData()

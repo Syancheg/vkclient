@@ -10,7 +10,16 @@ import Alamofire
 import SwiftyJSON
 import RealmSwift
 
-class VkApiServices{
+protocol VkApiServicesInterface {
+    func getFriends()
+    func getGroups()
+    func searhGroups(query: String, completion: @escaping ([Group]) -> Void )
+    func getAlbum(ownerId: Int, completion: @escaping ([Album]) -> Void )
+    func getPhoto(ownerId: String, albumId: String, completion: @escaping ([Photo]) -> Void )
+    func getNews(from startTime: TimeInterval?, startFrom: String?, completion: @escaping ([News], String) -> Void)
+}
+
+class VkApiServices: VkApiServicesInterface {
     
     // MARK: - Properties
     
